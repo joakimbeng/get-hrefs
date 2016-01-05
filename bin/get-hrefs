@@ -1,0 +1,48 @@
+#!/usr/bin/env node
+'use strict';
+var fs = require('fs');
+var meow = require('meow');
+var getStdin = require('get-stdin');
+var getHrefs = require('../src');
+
+var cli = meow({
+	help: [
+		'	Usage:',
+		'		get-hrefs <html file>',
+		'		cat <html file> | get-hrefs',
+		'',
+		'	Options:',
+		'		-b, --base-url	Set baseUrl',
+		'',
+		'	Examples:',
+		'		curl -s example.com | get-hrefs',
+		''
+	]
+}, {
+	alias: {
+		b: 'base-url'
+	},
+	defaults: {
+		baseUrl: ''
+	}
+});
+
+var file = cli.input[0];
+
+getStdin()
+	.then(function (stdin) {
+		if (!stdin && !file) {
+			console.error('Error: Html file required!');
+			cli.showHelp(1);
+		}
+		if (stdin) {
+			return stdin;
+		}
+		return fs.readFileSync(file, 'utf8');
+	})
+	.then(function (html) {
+		return getHrefs(html, cli.flags);
+	})
+	.then(function (hrefs) {
+		console.log(hrefs.join('\n'));
+	});

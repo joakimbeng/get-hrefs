@@ -1,0 +1,42 @@
+{
+  "name": "get-hrefs",
+  "version": "0.1.0",
+  "description": "Get all href urls from an HTML string",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "bin": "bin/get-hrefs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joakimbeng/get-hrefs.git"
+  },
+  "keywords": [
+    "html",
+    "find",
+    "extract",
+    "links",
+    "urls",
+    "href",
+    "hrefs",
+    "get",
+    "string"
+  ],
+  "author": "Joakim Carlstein <joakim.carlstein@gmail.com> (http://joakim.beng.se/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joakimbeng/get-hrefs/issues"
+  },
+  "homepage": "https://github.com/joakimbeng/get-hrefs#readme",
+  "devDependencies": {
+    "ava": "^0.9.1",
+    "xo": "^0.12.1"
+  },
+  "dependencies": {
+    "array-uniq": "^1.0.2",
+    "cheerio": "^0.19.0",
+    "get-stdin": "^5.0.1",
+    "meow": "^3.7.0",
+    "normalize-url": "^1.4.0"
+  }
+}
