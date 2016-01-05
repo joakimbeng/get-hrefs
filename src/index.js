@@ -15,8 +15,12 @@ module.exports = exports = function getHrefs(html, opts) {
 	}
 
 	var hrefs = $('a')
+		.filter(function () {
+			var href = $(this).attr('href');
+			return href && href !== '#';
+		})
 		.map(function () {
-			var href = $(this).attr('href') || '';
+			var href = $(this).attr('href');
 			href = url.resolve(baseUrl, href);
 			if (hasProtocol(href)) {
 				return normalizeUrl(href);

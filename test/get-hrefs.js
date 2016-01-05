@@ -105,14 +105,56 @@ test('duplicates', t => {
 			<base href="http://example.com/dir/index.html?qs=1">
 		</head>
 		<body>
-		<a href="path?b=1&a=2">Link 1</a>
-		<a href="/path">Link 2</a>
-		<a href="path?a=2&b=1">Link 3</a>
+			<a href="path?b=1&a=2">Link 1</a>
+			<a href="/path">Link 2</a>
+			<a href="path?a=2&b=1">Link 3</a>
 		</body>
 	`;
 	const actual = getHrefs(html);
 	const expected = [
 		'http://example.com/dir/path?a=2&b=1',
+		'http://example.com/path'
+	];
+	t.same(actual, expected);
+});
+
+test('anchors without href', t => {
+	const html = `
+		<body>
+			<a onclick="alert('Yo!')">Link 1</a>
+			<a href="http://example.com/path">Link 2</a>
+		</body>
+	`;
+	const actual = getHrefs(html);
+	const expected = [
+		'http://example.com/path'
+	];
+	t.same(actual, expected);
+});
+
+test('anchors with empty href', t => {
+	const html = `
+		<body>
+			<a href="">Link 1</a>
+			<a href="http://example.com/path">Link 2</a>
+		</body>
+	`;
+	const actual = getHrefs(html);
+	const expected = [
+		'http://example.com/path'
+	];
+	t.same(actual, expected);
+});
+
+test('anchors with href with only empty hash', t => {
+	const html = `
+		<body>
+			<a href="#">Link 1</a>
+			<a href="http://example.com/path">Link 2</a>
+		</body>
+	`;
+	const actual = getHrefs(html);
+	const expected = [
 		'http://example.com/path'
 	];
 	t.same(actual, expected);
