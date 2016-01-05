@@ -1,6 +1,6 @@
 {
   "name": "get-hrefs",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Get all href urls from an HTML string",
   "main": "src/index.js",
   "scripts": {
