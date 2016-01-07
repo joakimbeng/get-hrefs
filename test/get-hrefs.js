@@ -159,3 +159,7 @@ test('anchors with href with only empty hash', t => {
 	];
 	t.same(actual, expected);
 });
+
+test('no string', t => {
+	t.throws(() => getHrefs({}), 'getHrefs expected a `string` but got: `object`');
+});

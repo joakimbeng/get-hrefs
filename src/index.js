@@ -5,6 +5,9 @@ var normalizeUrl = require('normalize-url');
 var arrayUniq = require('array-uniq');
 
 module.exports = exports = function getHrefs(html, opts) {
+	if (typeof html !== 'string') {
+		throw new Error('getHrefs expected a `string` but got: `' + typeof html + '`');
+	}
 	opts = opts || {};
 	var $ = cheerio.load(html);
 	var baseUrl = opts.baseUrl || '';
