@@ -19,8 +19,11 @@ module.exports = exports = function getHrefs(html, opts) {
 
 	var hrefs = $('a')
 		.filter(function () {
+			/* eslint no-script-url: 0 */
 			var href = $(this).attr('href');
-			return href && href !== '#';
+			return href &&
+				href !== '#' &&
+				href.indexOf('javascript:') !== 0;
 		})
 		.map(function () {
 			var href = $(this).attr('href');

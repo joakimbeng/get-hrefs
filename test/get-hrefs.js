@@ -160,6 +160,20 @@ test('anchors with href with only empty hash', t => {
 	t.same(actual, expected);
 });
 
+test('anchors with href beginning with javascript:', t => {
+	const html = `
+		<body>
+			<a href="javascript:alert('hi!')">Link 1</a>
+			<a href="http://example.com/path">Link 2</a>
+		</body>
+	`;
+	const actual = getHrefs(html);
+	const expected = [
+		'http://example.com/path'
+	];
+	t.same(actual, expected);
+});
+
 test('no string', t => {
 	t.throws(() => getHrefs({}), 'getHrefs expected a `string` but got: `object`');
 });
