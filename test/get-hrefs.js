@@ -14,7 +14,7 @@ test('absolute urls', t => {
 		'http://example.com/path?a=2&b=1',
 		'https://another.example.com/path'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('relative urls without base url', t => {
@@ -29,7 +29,7 @@ test('relative urls without base url', t => {
 		'path?b=1&a=2',
 		'/path'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('relative urls with base url option', t => {
@@ -44,7 +44,7 @@ test('relative urls with base url option', t => {
 		'http://example.com/dir/path?a=2&b=1',
 		'http://example.com/path'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('relative urls with base tag', t => {
@@ -62,7 +62,7 @@ test('relative urls with base tag', t => {
 		'http://example.com/dir/path?a=2&b=1',
 		'http://example.com/path'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('relative urls with base url and tag', t => {
@@ -80,7 +80,7 @@ test('relative urls with base url and tag', t => {
 		'http://example.com/root/dir/path?a=2&b=1',
 		'http://example.com/path'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('absolute urls with base url and tag', t => {
@@ -96,7 +96,7 @@ test('absolute urls with base url and tag', t => {
 	const expected = [
 		'https://another.example.com'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('duplicates', t => {
@@ -115,7 +115,7 @@ test('duplicates', t => {
 		'http://example.com/dir/path?a=2&b=1',
 		'http://example.com/path'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('anchors without href', t => {
@@ -129,7 +129,7 @@ test('anchors without href', t => {
 	const expected = [
 		'http://example.com/path'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('anchors with empty href', t => {
@@ -143,7 +143,7 @@ test('anchors with empty href', t => {
 	const expected = [
 		'http://example.com/path'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('anchors with href with only empty hash', t => {
@@ -157,7 +157,7 @@ test('anchors with href with only empty hash', t => {
 	const expected = [
 		'http://example.com/path'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('anchors with href beginning with javascript:', t => {
@@ -171,9 +171,27 @@ test('anchors with href beginning with javascript:', t => {
 	const expected = [
 		'http://example.com/path'
 	];
-	t.same(actual, expected);
+	t.deepEqual(actual, expected);
 });
 
 test('no string', t => {
 	t.throws(() => getHrefs({}), 'getHrefs expected a `string` but got: `object`');
+});
+
+test('normalize-url options', t => {
+	const html = `
+		<body>
+			<a href="http://www.example.com">Link 1</a>
+		</body>
+	`;
+	const actualDefault = getHrefs(html);
+	const actualDontStripWww = getHrefs(html, {stripWWW: false});
+	const expectedDefault = [
+		'http://example.com'
+	];
+	const expectedDontStripWww = [
+		'http://www.example.com'
+	];
+	t.deepEqual(actualDefault, expectedDefault);
+	t.deepEqual(actualDontStripWww, expectedDontStripWww);
 });

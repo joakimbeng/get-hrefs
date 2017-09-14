@@ -17,7 +17,7 @@ npm install --save get-hrefs
 ### Module usage
 
 ```javascript
-var getHrefs = require('get-hrefs');
+const getHrefs = require('get-hrefs');
 
 getHrefs(`
 	<body>
@@ -45,14 +45,16 @@ $> get-hrefs --help
 Get all href urls from an HTML string
 
   Usage:
-  	get-hrefs <html file>
-  	cat <html file> | get-hrefs
+    get-hrefs <html file>
+    cat <html file> | get-hrefs
 
   Options:
-  	-b, --base-url	Set baseUrl
+    -b, --base-url	Set baseUrl
+    <all other flags are passed to normalize-url>
 
   Examples:
-  	curl -s example.com | get-hrefs
+    curl -s example.com | get-hrefs
+    echo '<a href="http://www.example.com">Link</a>' | get-hrefs --no-strip-w-w-w
 ```
 
 
@@ -73,6 +75,10 @@ Type: `String`
 Default: `""`
 
 The baseUrl to use for relative hrefs. The module also takes [`<base ...>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base) tags into account.
+
+#### options.`<any>`
+
+All other options are passed to [`normalize-url`](https://github.com/sindresorhus/normalize-url). See its [options](https://github.com/sindresorhus/normalize-url#options) for alternatives.
 
 ## Related modules
 
