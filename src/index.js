@@ -1,47 +1,54 @@
 'use strict';
-const url = require('url');
 const cheerio = require('cheerio');
 const normalizeUrl = require('normalize-url');
-const arrayUniq = require('array-uniq');
-const omit = require('object.omit');
 
-module.exports = getHrefs;
+const FAKE_PROTOCOL = 'fake:';
+const FAKE_HOSTNAME = 'base.url';
 
-function getHrefs(html, opts) {
+const defaultNormalizeOpts = {
+	stripWWW: false
+};
+
+const unique = arr => [...new Set(arr)];
+
+const getHrefs = (
+	html,
+	{baseUrl = `${FAKE_PROTOCOL}//${FAKE_HOSTNAME}`, ...normalizeOpts} = {}
+) => {
 	if (typeof html !== 'string') {
-		throw new TypeError('getHrefs expected a `string` but got: `' + typeof html + '`');
+		throw new TypeError(
+			`getHrefs expected a \`string\` but got: \`${typeof html}\``
+		);
 	}
-	opts = opts || {};
+
+	const opts = {...defaultNormalizeOpts, ...normalizeOpts};
 	const $ = cheerio.load(html);
-	let baseUrl = opts.baseUrl || '';
 	const base = $('base');
-	const normalizeOpts = omit(opts, ['baseUrl']);
 
 	if (base.length !== 0) {
-		baseUrl = url.resolve(baseUrl, base.first().attr('href') || '');
+		baseUrl = new URL(base.first().attr('href') || '', baseUrl).toString();
 	}
 
 	const hrefs = $('a')
-		.filter(function () {
-			/* eslint no-script-url: 0 */
-			const href = $(this).attr('href');
-			return href &&
-				href !== '#' &&
-				href.indexOf('javascript:') !== 0;
+		.filter((_, el) => {
+			const href = $(el).attr('href');
+			// eslint-disable-next-line no-script-url
+			return href && href !== '#' && !href.startsWith('javascript:');
 		})
-		.map(function () {
-			let href = $(this).attr('href');
-			href = url.resolve(baseUrl, href);
-			if (hasProtocol(href)) {
-				return normalizeUrl(href, normalizeOpts);
-			}
-			return href;
+		.map((_, el) => {
+			const href = new URL($(el).attr('href'), baseUrl).toString();
+			return normalizeUrl(href, opts);
 		})
 		.get();
 
-	return arrayUniq(hrefs);
-}
+	return unique(hrefs).map(href => {
+		const url = new URL(href);
+		if (url.protocol === FAKE_PROTOCOL && url.hostname === FAKE_HOSTNAME) {
+			return href.slice(FAKE_PROTOCOL.length + FAKE_HOSTNAME.length + 2);
+		}
 
-function hasProtocol(href) {
-	return href.indexOf('://') !== -1 || href.indexOf('//') === 0;
-}
+		return href;
+	});
+};
+
+module.exports = getHrefs;

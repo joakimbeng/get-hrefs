@@ -25,10 +25,7 @@ test('relative urls without base url', t => {
 		</body>
 	`;
 	const actual = getHrefs(html);
-	const expected = [
-		'path?b=1&a=2',
-		'/path'
-	];
+	const expected = ['/path?a=2&b=1', '/path'];
 	t.deepEqual(actual, expected);
 });
 
@@ -39,7 +36,9 @@ test('relative urls with base url option', t => {
 			<a href="/path">Link 2</a>
 		</body>
 	`;
-	const actual = getHrefs(html, {baseUrl: 'http://example.com/dir/index.html?qs=1'});
+	const actual = getHrefs(html, {
+		baseUrl: 'http://example.com/dir/index.html?qs=1'
+	});
 	const expected = [
 		'http://example.com/dir/path?a=2&b=1',
 		'http://example.com/path'
@@ -93,9 +92,7 @@ test('absolute urls with base url and tag', t => {
 		</body>
 	`;
 	const actual = getHrefs(html, {baseUrl: 'http://example.com/root/'});
-	const expected = [
-		'https://another.example.com'
-	];
+	const expected = ['https://another.example.com'];
 	t.deepEqual(actual, expected);
 });
 
@@ -118,6 +115,19 @@ test('duplicates', t => {
 	t.deepEqual(actual, expected);
 });
 
+test('relative duplicates without base url', t => {
+	const html = `
+		<body>
+			<a href="path?b=1&a=2">Link 1</a>
+			<a href="/path">Link 2</a>
+			<a href="path?a=2&b=1">Link 3</a>
+		</body>
+	`;
+	const actual = getHrefs(html);
+	const expected = ['/path?a=2&b=1', '/path'];
+	t.deepEqual(actual, expected);
+});
+
 test('anchors without href', t => {
 	const html = `
 		<body>
@@ -126,9 +136,7 @@ test('anchors without href', t => {
 		</body>
 	`;
 	const actual = getHrefs(html);
-	const expected = [
-		'http://example.com/path'
-	];
+	const expected = ['http://example.com/path'];
 	t.deepEqual(actual, expected);
 });
 
@@ -140,9 +148,7 @@ test('anchors with empty href', t => {
 		</body>
 	`;
 	const actual = getHrefs(html);
-	const expected = [
-		'http://example.com/path'
-	];
+	const expected = ['http://example.com/path'];
 	t.deepEqual(actual, expected);
 });
 
@@ -154,9 +160,7 @@ test('anchors with href with only empty hash', t => {
 		</body>
 	`;
 	const actual = getHrefs(html);
-	const expected = [
-		'http://example.com/path'
-	];
+	const expected = ['http://example.com/path'];
 	t.deepEqual(actual, expected);
 });
 
@@ -168,14 +172,15 @@ test('anchors with href beginning with javascript:', t => {
 		</body>
 	`;
 	const actual = getHrefs(html);
-	const expected = [
-		'http://example.com/path'
-	];
+	const expected = ['http://example.com/path'];
 	t.deepEqual(actual, expected);
 });
 
 test('no string', t => {
-	t.throws(() => getHrefs({}), 'getHrefs expected a `string` but got: `object`');
+	t.throws(
+		() => getHrefs({}),
+		'getHrefs expected a `string` but got: `object`'
+	);
 });
 
 test('normalize-url options', t => {
@@ -185,13 +190,11 @@ test('normalize-url options', t => {
 		</body>
 	`;
 	const actualDefault = getHrefs(html);
-	const actualDontStripWww = getHrefs(html, {stripWWW: false});
-	const expectedDefault = [
-		'http://example.com'
-	];
-	const expectedDontStripWww = [
-		'http://www.example.com'
-	];
+	const actualModified = getHrefs(html, {
+		stripWWW: true
+	});
+	const expectedDefault = ['http://www.example.com'];
+	const expectedModified = ['http://example.com'];
 	t.deepEqual(actualDefault, expectedDefault);
-	t.deepEqual(actualDontStripWww, expectedDontStripWww);
+	t.deepEqual(actualModified, expectedModified);
 });

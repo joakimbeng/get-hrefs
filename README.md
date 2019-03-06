@@ -54,18 +54,17 @@ Get all href urls from an HTML string
 
   Examples:
     curl -s example.com | get-hrefs
-    echo '<a href="http://www.example.com">Link</a>' | get-hrefs --no-strip-w-w-w
+    echo '<a href="http://www.example.com">Link</a>' | get-hrefs --strip-w-w-w
 ```
-
 
 ## API
 
 ### `getHrefs(html, [options])`
 
-| Name | Type | Description |
-|------|------|-------------|
-| html | `String` | The HTML string to extract hrefs from |
-| options | `Object` | Optional options |
+| Name    | Type     | Description                           |
+| ------- | -------- | ------------------------------------- |
+| html    | `String` | The HTML string to extract hrefs from |
+| options | `Object` | Optional options                      |
 
 Returns: `Array<String>`, all unique and [normalized](https://github.com/sindresorhus/normalize-url) hrefs resolved from any provided [`baseUrl`](#optionsbaseurl) and [`<base href="...">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base) in the HTML document.
 
@@ -82,7 +81,7 @@ All other options are passed to [`normalize-url`](https://github.com/sindresorhu
 
 ## Related modules
 
-* [get-urls](https://github.com/sindresorhus/get-urls) - Get all urls in a string
+- [get-urls](https://github.com/sindresorhus/get-urls) - Get all urls in a string
 
 ## License
 
