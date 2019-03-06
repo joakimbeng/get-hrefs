@@ -1,4 +1,5 @@
 'use strict';
+const {URL} = require('url');
 const cheerio = require('cheerio');
 const normalizeUrl = require('normalize-url');
 
