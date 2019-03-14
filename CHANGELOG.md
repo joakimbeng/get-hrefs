@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [4.0.0](https://github.com/joakimbeng/get-hrefs/compare/v3.0.0...v4.0.0) (2019-03-14)
+
+
+### Features
+
+* add allowedProtocols option ([7fb4cd7](https://github.com/joakimbeng/get-hrefs/commit/7fb4cd7))
+
+
+### BREAKING CHANGES
+
+* by default only URLs with "http" or "https" protocols will be returned, to enable more e.g. "ftp" use the new "allowedProtocols" option.
+
+
+
 # [3.0.0](https://github.com/joakimbeng/get-hrefs/compare/v2.0.0...v3.0.0) (2019-03-06)
 
 
