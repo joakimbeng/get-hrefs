@@ -7,14 +7,37 @@ const FAKE_PROTOCOL = 'fake:';
 const FAKE_HOSTNAME = 'base.url';
 
 const defaultNormalizeOpts = {
-	stripWWW: false
+	stripWWW: false,
+	defaultProtocol: ''
+};
+const defaultAllowedProtocols = {
+	http: true,
+	https: true
 };
 
 const unique = arr => [...new Set(arr)];
 
+const tryNormalize = (url, opts) => {
+	try {
+		return normalizeUrl(url, opts);
+	} catch (error) {
+		return url;
+	}
+};
+
+const isFake = url =>
+	url.protocol === FAKE_PROTOCOL && url.hostname === FAKE_HOSTNAME;
+
+const stripFake = url =>
+	url.slice(FAKE_PROTOCOL.length + FAKE_HOSTNAME.length + 2);
+
 const getHrefs = (
 	html,
-	{baseUrl = `${FAKE_PROTOCOL}//${FAKE_HOSTNAME}`, ...normalizeOpts} = {}
+	{
+		baseUrl = `${FAKE_PROTOCOL}//${FAKE_HOSTNAME}`,
+		allowedProtocols,
+		...normalizeOpts
+	} = {}
 ) => {
 	if (typeof html !== 'string') {
 		throw new TypeError(
@@ -23,6 +46,7 @@ const getHrefs = (
 	}
 
 	const opts = {...defaultNormalizeOpts, ...normalizeOpts};
+	const protocols = {...defaultAllowedProtocols, ...allowedProtocols};
 	const $ = cheerio.load(html);
 	const base = $('base');
 
@@ -31,25 +55,29 @@ const getHrefs = (
 	}
 
 	const hrefs = $('a')
-		.filter((_, el) => {
-			const href = $(el).attr('href');
-			// eslint-disable-next-line no-script-url
-			return href && href !== '#' && !href.startsWith('javascript:');
-		})
-		.map((_, el) => {
-			const href = new URL($(el).attr('href'), baseUrl).toString();
-			return normalizeUrl(href, opts);
-		})
+		.map((_, el) => $(el).attr('href'))
 		.get();
 
-	return unique(hrefs).map(href => {
-		const url = new URL(href);
-		if (url.protocol === FAKE_PROTOCOL && url.hostname === FAKE_HOSTNAME) {
-			return href.slice(FAKE_PROTOCOL.length + FAKE_HOSTNAME.length + 2);
+	const filteredHrefs = hrefs.reduce((hrefs, href) => {
+		if (!href || href === '#') {
+			return hrefs;
 		}
 
-		return href;
-	});
+		try {
+			const url = new URL(href, baseUrl);
+			if (isFake(url)) {
+				hrefs.push(stripFake(tryNormalize(url.toString(), opts)));
+			} else if (protocols[url.protocol.slice(0, -1)]) {
+				hrefs.push(tryNormalize(url.toString(), opts));
+			}
+		} catch (error) {
+			// Ignore errors (they are caused by invalid URLs and we don't care about them anyway)
+		}
+
+		return hrefs;
+	}, []);
+
+	return unique(filteredHrefs);
 };
 
 module.exports = getHrefs;

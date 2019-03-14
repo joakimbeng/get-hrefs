@@ -75,6 +75,13 @@ Default: `""`
 
 The baseUrl to use for relative hrefs. The module also takes [`<base ...>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base) tags into account.
 
+#### options.allowedProtocols
+
+Type: `Object`  
+Default: `{"http": true, "https": true}`
+
+Specifies which protocols to allow by setting their respective key (the protocol name without ":") in `allowedProtocols` to `true` (or to `false` to disable one of the defaults), e.g. `allowedProtocols: {tel: true, http: false}` will return only found URLs with the protocols `tel:` or `https:`.
+
 #### options.`<any>`
 
 All other options are passed to [`normalize-url`](https://github.com/sindresorhus/normalize-url). See its [options](https://github.com/sindresorhus/normalize-url#options) for alternatives.

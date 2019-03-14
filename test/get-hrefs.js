@@ -176,6 +176,42 @@ test('anchors with href beginning with javascript:', t => {
 	t.deepEqual(actual, expected);
 });
 
+test('anchors with unallowed protocols', t => {
+	const html = `
+		<body>
+			<a href="mailto:test@test.com">Mail me</a>
+			<a href="http://example.com/path">Link 2</a>
+		</body>
+	`;
+	const actual = getHrefs(html);
+	const expected = ['http://example.com/path'];
+	t.deepEqual(actual, expected);
+});
+
+test('allowing extra protocols', t => {
+	const html = `
+		<body>
+			<a href="mailto:test@test.com">Mail me</a>
+			<a href="http://example.com/path">Link 2</a>
+		</body>
+	`;
+	const actual = getHrefs(html, {allowedProtocols: {mailto: true}});
+	const expected = ['mailto:test@test.com', 'http://example.com/path'];
+	t.deepEqual(actual, expected);
+});
+
+test('disabling protocols', t => {
+	const html = `
+		<body>
+			<a href="http://test.com">Link 1</a>
+			<a href="https://example.com/path">Link 2</a>
+		</body>
+	`;
+	const actual = getHrefs(html, {allowedProtocols: {http: false}});
+	const expected = ['https://example.com/path'];
+	t.deepEqual(actual, expected);
+});
+
 test('no string', t => {
 	t.throws(
 		() => getHrefs({}),
